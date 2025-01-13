@@ -1,8 +1,14 @@
-import './App.css'
+import './App.css';
+import responseMovies from './mocks/with-resuts.json'
+import withoutResults from './mocks/no-results.json'
+import { NoRenderResults, RenderMovies } from './components/movies/Movies';
 
 function App() {
+  const movies = responseMovies.Search;
+  const hasMovies = movies?.length > 0;
+
   return (
-    <div>
+    <div className='page'>
       <h1>Prueba Técnica</h1>
       <header>
         <form className='form'>
@@ -12,9 +18,17 @@ function App() {
       </header>
 
       <main>
-        Results
+        {
+          hasMovies ?
+            (
+              <RenderMovies movies={movies} />
+            )
+            : (
+              <NoRenderResults />
+            )
+        }
       </main>
-    </div>
+    </div >
   )
 }
 
