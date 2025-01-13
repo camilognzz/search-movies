@@ -1,6 +1,11 @@
 export interface IMovie {
-    imdbID: string;
-    Title: string;
-    Year: string;
-    Poster: string;
+    id: string;
+    title: string;
+    year: string;
+    poster: string;
   }
+
+  
+export interface RenderMoviesProps {
+  movies: IMovie[];
+}

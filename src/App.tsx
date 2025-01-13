@@ -1,12 +1,13 @@
 import './App.css';
-import responseMovies from './mocks/with-resuts.json'
-import withoutResults from './mocks/no-results.json'
+
 import { NoRenderResults, RenderMovies } from './components/movies/Movies';
+import { useMovies } from './hooks/useMovies';
+
 
 function App() {
-  const movies = responseMovies.Search;
-  const hasMovies = movies?.length > 0;
-
+  
+  const { movies } = useMovies();
+  
   return (
     <div className='page'>
       <h1>Prueba Técnica</h1>
