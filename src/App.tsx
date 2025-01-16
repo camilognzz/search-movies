@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import './App.css';
 import { NoRenderResults, RenderMovies } from './components/movies/Movies';
 import { useMovies } from './hooks/movies/useMovies';
+import debounce from 'just-debounce-it';
 
 
 const useSearch = () => {
@@ -42,17 +43,26 @@ function App() {
   const { movies, loading, getMovies } = useMovies({ search, sort });
   const hasMovies = movies?.length > 0;
 
+  const debouncedGetMovies = useCallback(
+    debounce(({ search }:string) => {
+      console.log('search', search);
+      getMovies({ search });
+    }, 300)
+    , [getMovies])
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    getMovies();
+    getMovies({ search });
   }
 
   const handleSort = () => {
-    setSort(!sort) 
+    setSort(!sort)
   }
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearch(event.currentTarget.value)
+    const newSearch = event.target.value;
+    setSearch(newSearch)
+    debouncedGetMovies(newSearch);
   }
 
 
@@ -62,7 +72,7 @@ function App() {
       <header>
         <form className='form' onSubmit={handleSubmit}>
           <input onChange={handleChange} name='query' placeholder='Avengers, Star Wars, The Matrix...' />
-          <input type="checkbox" onChange={handleSort} checked={sort}/>
+          <input type="checkbox" onChange={handleSort} checked={sort} />
           <button type='submit'>Buscar</button>
         </form>
         {error && <p style={{ color: 'red' }}>{error}</p>}

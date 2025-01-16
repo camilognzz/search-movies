@@ -10,20 +10,22 @@ export function useMovies({ search, sort }: { search: string }) {
   const [error, setError] = useState<null>(null);
   const previesSearch = useRef(search);
 
-  const getMovies = async () => {
-    if (search == previesSearch.current) return;
-    try {
-      setLoading(true);
-      setError(null);
-      previesSearch.current = search;
-      const newMovies = await searchMovies({ search });
-      setMovies(newMovies);
-    } catch (e) {
-      setError(e.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const getMovies = useMemo(() => {
+    return async ({search}: {search:string}) => {
+      if (search == previesSearch.current) return;
+      try {
+        setLoading(true);
+        setError(null);
+        previesSearch.current = search;
+        const newMovies = await searchMovies({ search });
+        setMovies(newMovies);
+      } catch (e) {
+        setError(e.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+  }, [search]);
 
   const sortedMovies = useMemo(() => {
     return sort
