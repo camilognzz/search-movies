@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import './App.css';
 import { NoRenderResults, RenderMovies } from './components/movies/Movies';
-import { useMovies } from './hooks/useMovies';
+import { useMovies } from './hooks/movies/useMovies';
 
 
 const useSearch = () => {
@@ -37,13 +37,18 @@ const useSearch = () => {
 
 
 function App() {
+  const [sort, setSort] = useState<boolean>(false);
   const { search, setSearch, error } = useSearch();
-  const { movies } = useMovies();
+  const { movies, loading, getMovies } = useMovies({ search, sort });
   const hasMovies = movies?.length > 0;
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log({ search });
+    getMovies();
+  }
+
+  const handleSort = () => {
+    setSort(!sort) 
   }
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,6 +62,7 @@ function App() {
       <header>
         <form className='form' onSubmit={handleSubmit}>
           <input onChange={handleChange} name='query' placeholder='Avengers, Star Wars, The Matrix...' />
+          <input type="checkbox" onChange={handleSort} checked={sort}/>
           <button type='submit'>Buscar</button>
         </form>
         {error && <p style={{ color: 'red' }}>{error}</p>}
@@ -64,13 +70,15 @@ function App() {
 
       <main>
         {
-          hasMovies ?
-            (
-              <RenderMovies movies={movies} />
-            )
-            : (
-              <NoRenderResults />
-            )
+          loading ? <p>Cargando</p>
+            :
+            hasMovies ?
+              (
+                <RenderMovies movies={movies} />
+              )
+              : (
+                <NoRenderResults />
+              )
         }
       </main>
     </div >
